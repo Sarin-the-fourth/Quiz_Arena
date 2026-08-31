@@ -1,8 +1,12 @@
 import { z } from "zod";
 
 export const signupSchema = z.object({
-  name: z.string().min(2),
-  email: z.email().transform((email) => email.toLowerCase()),
+  name: z.string().trim().min(1, "Name required"),
+  email: z
+    .email()
+    .trim()
+    .min(1, "Email required")
+    .transform((email) => email.toLowerCase()),
   password: z
     .string()
     .min(8)
@@ -22,7 +26,11 @@ export const signupSchema = z.object({
 export type signupDTO = z.infer<typeof signupSchema>;
 
 export const loginSchema = z.object({
-  email: z.email().transform((email) => email.toLowerCase()),
+  email: z
+    .string()
+    .trim()
+    .min(1, "Email required")
+    .transform((email) => email.toLowerCase()),
   password: z.string().min(1, "Password is required"),
 });
 

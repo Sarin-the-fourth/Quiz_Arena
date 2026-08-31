@@ -14,7 +14,7 @@ class AuthService {
     const existsEmail = await User.findOne({ email: normalizedEmail });
 
     if (existsEmail) {
-      throw new Error("");
+      throw new Error("User with this email already exist.");
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
