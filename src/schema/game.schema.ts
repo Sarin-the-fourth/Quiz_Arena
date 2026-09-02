@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const createGameSchema = z.object({
   quizId: z.string().min(1, "Quiz ID required"),
+  gameMode: z.enum(["SINGLE", "MULTIPLAYER"]),
 });
 
 export type CreateGameDTO = z.infer<typeof createGameSchema>;

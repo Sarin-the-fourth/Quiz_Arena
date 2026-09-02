@@ -1,10 +1,14 @@
 import mongoose from "mongoose";
-import { Game } from "../model/game.model";
+import { Game, type IGame } from "../model/game.model";
 import { Quiz } from "../model/quiz.model";
 import { generateRoomCode } from "../utils/generateRoomCode";
 
 class GameService {
-  async createGame(quizId: string, userId: string) {
+  async createGame(
+    quizId: string,
+    userId: string,
+    gameMode: IGame["gameMode"]
+  ) {
     const quiz = await Quiz.findById(quizId);
 
     if (!quiz) throw new Error("Quiz not found!");
@@ -15,7 +19,8 @@ class GameService {
       quizId: new mongoose.Types.ObjectId(quizId),
       hostId: new mongoose.Types.ObjectId(userId),
       roomCode,
-      players: [userId],
+      gameMode,
+      players: [new mongoose.Types.ObjectId(userId)],
       status: "WAITING",
     });
 
@@ -24,6 +29,10 @@ class GameService {
 
   async joinGame(roomCode: string, userId: string) {
     const game = await Game.findOne({ roomCode });
+
+    if (game?.gameMode === "SINGLE") {
+      throw new Error("Cannot join single player game");
+    }
 
     if (!game) {
       throw new Error("Game not found!");
@@ -49,7 +58,10 @@ class GameService {
   }
 
   async getGame() {
-    return await Game.find();
+    return await Game.find({ gameMode: "MULTIPLAYER", status: "WAITING" })
+      .select("-roomCode")
+      .populate("quizId", "title category")
+      .populate("hostId", "name");
   }
 
   async getOneGame(gameId: string) {

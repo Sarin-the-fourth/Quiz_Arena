@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import { z_quizSchema } from "../schema/quiz.schema";
 import { crudQuiz } from "../services/quiz.services";
+import { QuizCategory } from "../model/quiz.model";
 
 type QuizParam = {
   quizId: string;
@@ -95,12 +96,6 @@ export async function getMyQuiz(req: Request, res: Response) {
 
     const quiz = await crudQuiz.getMyQuiz(userId);
 
-    if (!quiz || quiz.length === 0) {
-      return res.status(404).json({
-        message: "You are yet to create a quiz",
-      });
-    }
-
     return res.status(200).json({
       quiz,
     });
@@ -166,4 +161,10 @@ export async function deleteQuiz(req: Request<QuizParam>, res: Response) {
       message: "Something went wrong",
     });
   }
+}
+
+export async function getCategory(req: Request, res: Response) {
+  return res.status(200).json({
+    categories: Object.values(QuizCategory),
+  });
 }

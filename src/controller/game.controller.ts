@@ -19,7 +19,11 @@ export async function createGame(req: Request, res: Response) {
       });
     }
 
-    const game = await gameService.createGame(result.data.quizId, userId);
+    const game = await gameService.createGame(
+      result.data.quizId,
+      userId,
+      result.data.gameMode
+    );
 
     return res.status(200).json({
       message: "New game created",

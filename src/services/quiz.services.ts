@@ -10,15 +10,18 @@ class CrudQuiz {
   }
 
   async getQuiz() {
-    return await Quiz.find();
+    return await Quiz.find().select("_id title description category createdBy");
   }
 
+  // returns questions
   async getOneQuiz(quizId: string) {
     return await Quiz.findById(quizId);
   }
 
   async getMyQuiz(userId: string) {
-    return await Quiz.find({ createdBy: userId });
+    return await Quiz.find({ createdBy: userId }).select(
+      "_id title description category"
+    );
   }
 
   async updateQuiz(userId: string, quizId: string, data: UpdateQuizDTO) {
@@ -27,6 +30,9 @@ class CrudQuiz {
       { $set: data },
       { returnDocument: "after" }
     );
+
+    if (quiz?.createdBy.toString() !== userId)
+      throw new Error("User not authorized");
 
     if (!quiz) throw new Error("Quiz not found!");
 

@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   createQuiz,
   deleteQuiz,
+  getCategory,
   getMyQuiz,
   getOneQuiz,
   getQuiz,
@@ -14,6 +15,7 @@ const router = Router();
 router.post("/create", requireUser, createQuiz);
 router.get("/", getQuiz);
 router.get("/my", requireUser, getMyQuiz);
+router.get("/category", getCategory);
 
 // routes needing data in params (always keep below normal routes)
 router.get("/:quizId", getOneQuiz);
