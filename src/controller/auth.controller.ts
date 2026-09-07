@@ -77,6 +77,29 @@ export async function login(req: Request, res: Response) {
   }
 }
 
+export async function logout(req: Request, res: Response) {
+  try {
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+    });
+
+    return res.status(200).json({
+      message: "Logged out successfully",
+    });
+  } catch (error) {
+    if (error instanceof Error) {
+      return res.status(400).json({
+        message: error.message,
+      });
+    }
+    return res.status(500).json({
+      message: "Something went wrong",
+    });
+  }
+}
+
 export async function refresh(req: Request, res: Response) {
   try {
     const refreshToken = req.cookies["refreshToken"];

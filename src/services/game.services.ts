@@ -13,7 +13,11 @@ class GameService {
 
     if (!quiz) throw new Error("Quiz not found!");
 
-    const roomCode = generateRoomCode();
+    let roomCode: string;
+
+    do {
+      roomCode = generateRoomCode();
+    } while (await Game.exists({ roomCode }));
 
     const game = await Game.create({
       quizId: new mongoose.Types.ObjectId(quizId),
@@ -57,15 +61,35 @@ class GameService {
     return game;
   }
 
+  async leaveGame(roomCode: string, userId: string) {
+    const result = await Game.findOneAndUpdate(
+      { players: userId, roomCode: roomCode },
+      {
+        $pull: {
+          players: userId,
+        },
+      },
+      { returnDocument: "after" }
+    );
+
+    if (!result) {
+      throw new Error("You are not in a game");
+    }
+
+    return result;
+  }
+
   async getGame() {
     return await Game.find({ gameMode: "MULTIPLAYER", status: "WAITING" })
-      .select("-roomCode")
       .populate("quizId", "title category")
       .populate("hostId", "name");
   }
 
-  async getOneGame(gameId: string) {
-    const game = await Game.findById(gameId);
+  async getOneGame(roomCode: string) {
+    const game = await Game.findOne({ roomCode })
+      .populate("quizId", "title category")
+      .populate("hostId", "name")
+      .populate("players", "name");
 
     if (!game) {
       throw new Error("Game not found");
@@ -74,8 +98,8 @@ class GameService {
     return game;
   }
 
-  async startGame(gameId: string, userId: string) {
-    const game = await Game.findById(gameId);
+  async startGame(roomCode: string, userId: string) {
+    const game = await Game.findOne({ roomCode });
 
     if (!game) throw new Error("Game unavailable");
 

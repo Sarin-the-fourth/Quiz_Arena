@@ -16,7 +16,10 @@ export const joinGameSchema = z.object({
 });
 
 export const getOneGameSchema = z.object({
-  gameId: z.string().trim().min(1, "Game ID required"),
+  roomCode: z
+    .string()
+    .min(1, "Room Code is Required")
+    .max(6, "Invalid Room Code"),
 });
 
 export const startGameSchema = getOneGameSchema;

@@ -4,6 +4,7 @@ import {
   getGame,
   getOneGame,
   joinGame,
+  leaveGame,
   startGame,
 } from "../controller/game.controller";
 import { requireUser } from "../middleware/auth.middleware";
@@ -15,7 +16,8 @@ router.post("/join", requireUser, joinGame);
 router.get("/", getGame);
 
 // routes using params
-router.get("/:gameId", getOneGame);
-router.patch("/:gameId/start", requireUser, startGame);
+router.patch("/:roomCode/leave", requireUser, leaveGame);
+router.get("/:roomCode", getOneGame);
+router.patch("/:roomCode/start", requireUser, startGame);
 
 export default router;

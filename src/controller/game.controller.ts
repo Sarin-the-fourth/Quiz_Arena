@@ -6,6 +6,11 @@ import {
   joinGameSchema,
   startGameSchema,
 } from "../schema/game.schema";
+import { getIO } from "../config/socket";
+
+type RoomCodeType = {
+  roomCode: string;
+};
 
 export async function createGame(req: Request, res: Response) {
   try {
@@ -71,6 +76,34 @@ export async function joinGame(req: Request, res: Response) {
   }
 }
 
+export async function leaveGame(req: Request<RoomCodeType>, res: Response) {
+  try {
+    const userId = (req as any).user.userId;
+    const { roomCode } = req.params;
+
+    if (!roomCode) {
+      return res.status(401).json({
+        message: "Room Code missing",
+      });
+    }
+
+    await gameService.leaveGame(roomCode, userId);
+
+    return res.status(200).json({
+      message: `Left the room ${roomCode}`,
+    });
+  } catch (error) {
+    if (error instanceof Error) {
+      return res.status(400).json({
+        message: error.message,
+      });
+    }
+    return res.status(500).json({
+      message: "Something went wrong",
+    });
+  }
+}
+
 export async function getGame(req: Request, res: Response) {
   try {
     const games = await gameService.getGame();
@@ -101,7 +134,7 @@ export async function getOneGame(req: Request, res: Response) {
       });
     }
 
-    const game = await gameService.getOneGame(result.data.gameId);
+    const game = await gameService.getOneGame(result.data.roomCode);
 
     return res.status(200).json({
       game,
@@ -130,7 +163,9 @@ export async function startGame(req: Request, res: Response) {
       });
     }
 
-    const game = await gameService.startGame(result.data.gameId, userId);
+    const game = await gameService.startGame(result.data.roomCode, userId);
+
+    getIO().to(game.roomCode).emit("gameStarted");
 
     return res.status(200).json({
       message: "Game started",

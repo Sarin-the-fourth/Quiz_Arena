@@ -1,3 +1,4 @@
+import { Game } from "../model/game.model";
 import { Quiz } from "../model/quiz.model";
 import type { CreateQuizDTO, UpdateQuizDTO } from "../schema/quiz.schema";
 
@@ -46,6 +47,10 @@ class CrudQuiz {
     });
 
     if (!quiz) throw new Error("Quiz not found!");
+
+    await Game.deleteMany({
+      quizId: quiz._id,
+    });
 
     return quiz;
   }

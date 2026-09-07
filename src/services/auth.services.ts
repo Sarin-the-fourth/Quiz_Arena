@@ -6,7 +6,6 @@ import {
   generateRefreshToken,
   verifyRefreshToken,
 } from "../utils/jwt";
-import { email } from "zod";
 
 class AuthService {
   async signup({ email, name, password }: signupDTO) {
