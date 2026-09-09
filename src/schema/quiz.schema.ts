@@ -38,3 +38,13 @@ export type CreateQuizDTO = z.infer<typeof z_quizSchema>;
 
 export const z_updateQuizSchema = z_quizSchema.partial();
 export type UpdateQuizDTO = z.infer<typeof z_updateQuizSchema>;
+
+export const z_submitSchema = z.object({
+  answers: z.array(
+    z.object({
+      questionId: z.string(),
+      answer: z.string(),
+    })
+  ),
+});
+export type SubmitDTO = z.infer<typeof z_submitSchema>;

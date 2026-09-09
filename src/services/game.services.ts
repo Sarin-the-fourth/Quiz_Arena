@@ -24,7 +24,14 @@ class GameService {
       hostId: new mongoose.Types.ObjectId(userId),
       roomCode,
       gameMode,
-      players: [new mongoose.Types.ObjectId(userId)],
+
+      players: [
+        {
+          userId: new mongoose.Types.ObjectId(userId),
+          score: 0,
+        },
+      ],
+
       status: "WAITING",
     });
 
@@ -34,11 +41,11 @@ class GameService {
   async joinGame(roomCode: string, userId: string) {
     const game = await Game.findOne({ roomCode });
 
-    if (game?.gameMode === "SINGLE") {
-      throw new Error("Cannot join single player game");
+    if (!game) {
+      throw new Error("Game not found!");
     }
 
-    if (!game) {
+    if (game.gameMode === "SINGLE") {
       throw new Error("Game not found!");
     }
 
@@ -46,7 +53,7 @@ class GameService {
       throw new Error("Game has already started");
     }
 
-    if (game.players.some((player) => player.toString() === userId)) {
+    if (game.players.some((player) => player.userId.toString() === userId)) {
       throw new Error("You are already in this game");
     }
 
@@ -54,7 +61,10 @@ class GameService {
       throw new Error("Room full");
     }
 
-    game.players.push(new mongoose.Types.ObjectId(userId));
+    game.players.push({
+      userId: new mongoose.Types.ObjectId(userId),
+      score: 0,
+    });
 
     await game.save();
 
@@ -63,10 +73,10 @@ class GameService {
 
   async leaveGame(roomCode: string, userId: string) {
     const result = await Game.findOneAndUpdate(
-      { players: userId, roomCode: roomCode },
+      { roomCode: roomCode, "players.userId": userId },
       {
         $pull: {
-          players: userId,
+          players: { userId: userId },
         },
       },
       { returnDocument: "after" }
@@ -76,6 +86,9 @@ class GameService {
       throw new Error("You are not in a game");
     }
 
+    if (result.players.length === 0) {
+      await this.removeGame(roomCode);
+    }
     return result;
   }
 
@@ -89,7 +102,7 @@ class GameService {
     const game = await Game.findOne({ roomCode })
       .populate("quizId", "title category")
       .populate("hostId", "name")
-      .populate("players", "name");
+      .populate("players.userId", "name");
 
     if (!game) {
       throw new Error("Game not found");
@@ -108,13 +121,23 @@ class GameService {
 
     if (game.status !== "WAITING") throw new Error("Game has already started");
 
-    if (game.players.length < 2) throw new Error("Atleast 2 players required");
+    if (game.gameMode === "MULTIPLAYER") {
+      if (game.players.length < 2)
+        throw new Error("Atleast 2 players required");
+    }
 
     game.status = "IN_PROGRESS";
 
     await game.save();
 
     return game;
+  }
+
+  async removeGame(roomCode: string) {
+    await Game.findOneAndDelete({
+      roomCode,
+      players: { $size: 0 },
+    });
   }
 }
 

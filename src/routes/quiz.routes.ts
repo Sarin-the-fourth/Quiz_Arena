@@ -6,6 +6,7 @@ import {
   getMyQuiz,
   getOneQuiz,
   getQuiz,
+  submitQuiz,
   updateQuiz,
 } from "../controller/quiz.controller";
 import { requireUser } from "../middleware/auth.middleware";
@@ -18,6 +19,7 @@ router.get("/my", requireUser, getMyQuiz);
 router.get("/category", getCategory);
 
 // routes needing data in params (always keep below normal routes)
+router.post("/:roomCode/submit", requireUser, submitQuiz);
 router.get("/:quizId", getOneQuiz);
 router.put("/update/:quizId", requireUser, updateQuiz);
 router.delete("/:quizId", requireUser, deleteQuiz);

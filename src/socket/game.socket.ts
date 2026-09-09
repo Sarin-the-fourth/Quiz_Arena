@@ -10,14 +10,9 @@ export function registerGameSocket(io: Server, socket: Socket) {
     }
 
     socket.join(roomCode);
-
-    console.log(`User ${socket.user.userId} joined room ${roomCode}`);
-
     socket.to(roomCode).emit("playerJoined", {
       userId: socket.user.userId,
     });
-
-    console.log("playerJoined emitted:", roomCode);
   });
 
   socket.on("leaveGame", (roomCode) => {

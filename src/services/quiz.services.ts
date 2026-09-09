@@ -1,6 +1,10 @@
 import { Game } from "../model/game.model";
 import { Quiz } from "../model/quiz.model";
-import type { CreateQuizDTO, UpdateQuizDTO } from "../schema/quiz.schema";
+import type {
+  CreateQuizDTO,
+  SubmitDTO,
+  UpdateQuizDTO,
+} from "../schema/quiz.schema";
 
 class CrudQuiz {
   async createQuiz(data: CreateQuizDTO, userId: string) {
@@ -16,7 +20,7 @@ class CrudQuiz {
 
   // returns questions
   async getOneQuiz(quizId: string) {
-    return await Quiz.findById(quizId);
+    return await Quiz.findById(quizId).select("-questions.correctAnswer");
   }
 
   async getMyQuiz(userId: string) {
@@ -53,6 +57,67 @@ class CrudQuiz {
     });
 
     return quiz;
+  }
+
+  async submitQuiz(roomCode: string, userId: string, submitData: SubmitDTO) {
+    const game = await Game.findOne({ roomCode });
+
+    if (!game) {
+      throw new Error("Game not found!");
+    }
+
+    const isPlayer = game.players.find(
+      (player) => player.userId.toString() === userId
+    );
+
+    if (!isPlayer) {
+      throw new Error("You are not a player in this game!");
+    }
+
+    const quiz = await Quiz.findById(game.quizId).select("questions");
+
+    if (!quiz) {
+      throw new Error("Quiz not found!");
+    }
+
+    let correctCount = 0;
+
+    for (const answer of submitData.answers) {
+      const question = quiz.questions.find(
+        (question) => question._id.toString() === answer.questionId
+      );
+
+      const isCorrectAnswer = question?.correctAnswer === answer.answer;
+
+      if (isCorrectAnswer) {
+        correctCount++;
+      }
+    }
+
+    const updatedGame = await Game.findOneAndUpdate(
+      {
+        roomCode,
+        "players.userId": userId,
+      },
+      {
+        $inc: {
+          "players.$.score": correctCount,
+        },
+      },
+      {
+        returnDocument: "after",
+      }
+    );
+
+    if (!updatedGame) {
+      throw new Error("Player not found in this game!");
+    }
+
+    return {
+      correctAnswers: correctCount,
+      totalAnswers: submitData.answers.length,
+      scoreAdded: correctCount,
+    };
   }
 }
 

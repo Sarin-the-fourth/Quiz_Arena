@@ -168,3 +168,41 @@ export async function getCategory(req: Request, res: Response) {
     categories: Object.values(QuizCategory),
   });
 }
+
+export async function submitQuiz(req: Request, res: Response) {
+  try {
+    const userId = (req as any).user.userId;
+    const { roomCode } = req.params;
+    const { answers } = req.body;
+
+    if (!roomCode) {
+      return res.status(400).json({
+        message: "Room code missing",
+      });
+    }
+    const normalizedAnswers = Array.isArray(answers)
+      ? answers.map((item: any) => ({
+          questionId: item.questionId,
+          answer: item.answer ?? "",
+        }))
+      : [];
+    const submit = await crudQuiz.submitQuiz(roomCode as string, userId, {
+      answers: normalizedAnswers,
+    });
+
+    return res.status(200).json({
+      message: "Your answers have been submitted",
+      submit,
+    });
+  } catch (error) {
+    if (error instanceof Error) {
+      return res.status(400).json({
+        message: error.message,
+      });
+    }
+
+    return res.status(500).json({
+      message: "Something went wrong",
+    });
+  }
+}
