@@ -4,7 +4,7 @@ const env = {
   ACCESS_TOKEN_SECRET: process.env.ACCESS_TOKEN_SECRET,
   ACCESS_TOKEN_EXPIRES: process.env.ACCESS_TOKEN_EXPIRES,
   REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET,
-  REFREESH_TOKEN_EXPIRES: process.env.REFRESH_TOKEN_EXPIRES,
+  REFRESH_TOKEN_EXPIRES: process.env.REFRESH_TOKEN_EXPIRES,
 };
 
 for (const [key, value] of Object.entries(env)) {
