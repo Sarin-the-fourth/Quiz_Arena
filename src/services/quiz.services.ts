@@ -1,3 +1,4 @@
+import { getIO } from "../config/socket";
 import { Game } from "../model/game.model";
 import { Quiz } from "../model/quiz.model";
 import type {
@@ -21,6 +22,10 @@ class CrudQuiz {
   // returns questions
   async getOneQuiz(quizId: string) {
     return await Quiz.findById(quizId).select("-questions.correctAnswer");
+  }
+
+  async getQuestionsAnswer(quizId: string) {
+    return await Quiz.findById(quizId).select("questions");
   }
 
   async getMyQuiz(userId: string) {
@@ -80,6 +85,12 @@ class CrudQuiz {
       throw new Error("Quiz not found!");
     }
 
+    if (!game.startedAt) throw new Error("Game has not yet started!");
+
+    const timeTaken = Math.floor(
+      (Date.now() - game.startedAt.getTime()) / 1000
+    );
+
     let correctCount = 0;
 
     for (const answer of submitData.answers) {
@@ -103,6 +114,10 @@ class CrudQuiz {
         $inc: {
           "players.$.score": correctCount,
         },
+        $set: {
+          "players.$.timeTaken": timeTaken,
+          "players.$.finished": true,
+        },
       },
       {
         returnDocument: "after",
@@ -113,10 +128,20 @@ class CrudQuiz {
       throw new Error("Player not found in this game!");
     }
 
+    const allPlayersFinsihed = updatedGame.players.every(
+      (player) => player.finished
+    );
+
+    if (allPlayersFinsihed) {
+      updatedGame.status = "FINISHED";
+      await updatedGame.save();
+      getIO().to(roomCode).emit("allPlayersFinished");
+    }
     return {
       correctAnswers: correctCount,
       totalAnswers: submitData.answers.length,
       scoreAdded: correctCount,
+      timeTaken,
     };
   }
 }

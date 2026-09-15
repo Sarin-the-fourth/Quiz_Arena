@@ -1,8 +1,8 @@
 import type { Server, Socket } from "socket.io";
 
 export function registerGameSocket(io: Server, socket: Socket) {
-  socket.on("joinGame", (roomCode) => {
-    console.log("joinGame received:", socket.user.userId, roomCode);
+  socket.on("joinGame", async (roomCode) => {
+    console.log("joinGame received:", socket.user.name, roomCode);
 
     if (socket.rooms.has(roomCode)) {
       console.log("Already in room:", roomCode);
@@ -12,6 +12,7 @@ export function registerGameSocket(io: Server, socket: Socket) {
     socket.join(roomCode);
     socket.to(roomCode).emit("playerJoined", {
       userId: socket.user.userId,
+      name: socket.user.name,
     });
   });
 
@@ -20,9 +21,10 @@ export function registerGameSocket(io: Server, socket: Socket) {
       return;
     }
     socket.leave(roomCode);
-    console.log(`User ${socket.user.userId} left room ${roomCode}`);
+    console.log(`User ${socket.user.name} left room ${roomCode}`);
     socket.to(roomCode).emit("playerLeft", {
       userId: socket.user.userId,
+      name: socket.user.name,
     });
   });
 }

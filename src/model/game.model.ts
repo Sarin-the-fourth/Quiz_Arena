@@ -3,6 +3,8 @@ import mongoose, { Document } from "mongoose";
 export interface IGamePlayer {
   userId: mongoose.Types.ObjectId;
   score: number;
+  timeTaken?: number;
+  finished: boolean;
 }
 
 export interface IGame extends Document {
@@ -12,6 +14,7 @@ export interface IGame extends Document {
   gameMode: "SINGLE" | "MULTIPLAYER";
   players: IGamePlayer[];
   status: "WAITING" | "IN_PROGRESS" | "FINISHED";
+  startedAt?: Date;
 }
 
 const gameSchema = new mongoose.Schema<IGame>(
@@ -51,8 +54,20 @@ const gameSchema = new mongoose.Schema<IGame>(
           type: Number,
           default: 0,
         },
+        timeTaken: {
+          type: Number,
+          default: 0,
+        },
+        finished: {
+          type: Boolean,
+          default: false,
+        },
       },
     ],
+
+    startedAt: {
+      type: Date,
+    },
 
     status: {
       type: String,

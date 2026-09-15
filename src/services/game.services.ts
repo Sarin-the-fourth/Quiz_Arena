@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
-import { Game, type IGame } from "../model/game.model";
-import { Quiz } from "../model/quiz.model";
-import { generateRoomCode } from "../utils/generateRoomCode";
+import { Game, type IGame } from "../model/game.model.js";
+import { Quiz } from "../model/quiz.model.js";
+import { generateRoomCode } from "../utils/generateRoomCode.js";
 
 class GameService {
   async createGame(
@@ -64,6 +64,8 @@ class GameService {
     game.players.push({
       userId: new mongoose.Types.ObjectId(userId),
       score: 0,
+      timeTaken: 0,
+      finished: false,
     });
 
     await game.save();
@@ -88,7 +90,14 @@ class GameService {
 
     if (result.players.length === 0) {
       await this.removeGame(roomCode);
+      return result;
     }
+
+    if (userId === result.hostId.toString()) {
+      result.hostId = result.players[0]!.userId;
+      await result.save();
+    }
+
     return result;
   }
 
@@ -127,6 +136,7 @@ class GameService {
     }
 
     game.status = "IN_PROGRESS";
+    game.startedAt = new Date();
 
     await game.save();
 

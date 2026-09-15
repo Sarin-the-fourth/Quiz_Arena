@@ -14,7 +14,7 @@ export const z_questionSchema = z
       .min(2, "Atleast 2 options are required")
       .max(4, "Only 4 options are allowed"),
     correctAnswer: z.string().trim().min(1, "Correct Answer is required"),
-    timeLimit: z.number().min(5).max(15).default(15),
+    timeLimit: z.number().min(5).max(60).default(15),
   })
   .superRefine((data, ctx) => {
     const optionIds = data.options.map((option) => option.id);

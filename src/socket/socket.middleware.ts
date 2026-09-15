@@ -1,7 +1,8 @@
 import type { Socket } from "socket.io";
 import { verifyAccessToken } from "../utils/jwt";
+import { User } from "../model/user.model";
 
-export function socketAuth(socket: Socket, next: (err?: Error) => void) {
+export async function socketAuth(socket: Socket, next: (err?: Error) => void) {
   try {
     const token = socket.handshake.auth.token;
 
@@ -11,7 +12,17 @@ export function socketAuth(socket: Socket, next: (err?: Error) => void) {
 
     const decoded = verifyAccessToken(token);
 
-    socket.user = decoded;
+    const user = await User.findById(decoded.userId).select("name");
+
+    if (!user) {
+      throw new Error("User not found!");
+    }
+
+    socket.user = {
+      userId: decoded.userId,
+      email: decoded.email,
+      name: user.name,
+    };
 
     next();
   } catch {

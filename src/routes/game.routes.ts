@@ -6,8 +6,8 @@ import {
   joinGame,
   leaveGame,
   startGame,
-} from "../controller/game.controller";
-import { requireUser } from "../middleware/auth.middleware";
+} from "../controller/game.controller.js";
+import { requireUser } from "../middleware/auth.middleware.js";
 
 const router = Router();
 

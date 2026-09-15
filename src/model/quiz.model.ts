@@ -35,7 +35,7 @@ const questionSchema = new mongoose.Schema({
     },
   },
   correctAnswer: { type: String, required: true, trim: true },
-  timeLimit: { type: Number, default: 15, min: 5, max: 15 },
+  timeLimit: { type: Number, default: 15, min: 5, max: 60 },
 });
 
 const quizSchema = new mongoose.Schema(

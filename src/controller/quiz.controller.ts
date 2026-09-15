@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import { z_quizSchema } from "../schema/quiz.schema";
 import { crudQuiz } from "../services/quiz.services";
 import { QuizCategory } from "../model/quiz.model";
+import { getIO } from "../config/socket";
 
 type QuizParam = {
   quizId: string;
@@ -86,6 +87,30 @@ export async function getOneQuiz(req: Request<QuizParam>, res: Response) {
     }
     return res.status(500).json({
       message: "Something went wrong",
+    });
+  }
+}
+
+export async function getQuestionsAnswer(
+  req: Request<QuizParam>,
+  res: Response
+) {
+  try {
+    const { quizId } = req.params;
+
+    const quiz = await crudQuiz.getQuestionsAnswer(quizId);
+
+    return res.status(200).json({
+      quiz,
+    });
+  } catch (error) {
+    if (error instanceof Error) {
+      return res.status(400).json({
+        message: error.message,
+      });
+    }
+    return res.status(500).json({
+      message: "Something went wrong!",
     });
   }
 }
