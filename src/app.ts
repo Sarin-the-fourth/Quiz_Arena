@@ -5,13 +5,9 @@ import quizRoutes from "./routes/quiz.routes.js";
 import gameRoutes from "./routes/game.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import cookieParser from "cookie-parser";
+import { allowedOrigins } from "./config/cors.js";
 
 const app = express();
-
-const allowedOrigins = [
-  "http://localhost:5173",
-  process.env.FRONTEND_URL,
-].filter(Boolean);
 
 app.use(
   cors({
