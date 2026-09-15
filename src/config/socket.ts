@@ -1,8 +1,8 @@
 import { Server } from "socket.io";
 import type { Server as HttpServer } from "http";
-import { verifyAccessToken } from "../utils/jwt";
-import { socketAuth } from "../socket/socket.middleware";
-import { registerSocketHandlers } from "../socket/socket.handler";
+import { verifyAccessToken } from "../utils/jwt.js";
+import { socketAuth } from "../socket/socket.middleware.js";
+import { registerSocketHandlers } from "../socket/socket.handler.js";
 
 let io: Server;
 

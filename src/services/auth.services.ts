@@ -1,11 +1,11 @@
 import bcrypt from "bcryptjs";
-import { User } from "../model/user.model";
-import type { loginDTO, signupDTO } from "../schema/user.schema";
+import { User } from "../model/user.model.js";
+import type { loginDTO, signupDTO } from "../schema/user.schema.js";
 import {
   generateAccessToken,
   generateRefreshToken,
   verifyRefreshToken,
-} from "../utils/jwt";
+} from "../utils/jwt.js";
 
 class AuthService {
   async signup({ email, name, password }: signupDTO) {

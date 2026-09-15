@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { userService } from "../services/user.services";
+import { userService } from "../services/user.services.js";
 
 type UserIdType = {
   userId: string;

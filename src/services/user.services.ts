@@ -1,4 +1,4 @@
-import { User } from "../model/user.model";
+import { User } from "../model/user.model.js";
 
 class UserService {
   async getOneUser(id: string) {

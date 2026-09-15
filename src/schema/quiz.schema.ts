@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { QuizCategory } from "../model/quiz.model";
+import { QuizCategory } from "../model/quiz.model.js";
 
 export const z_questionSchema = z
   .object({

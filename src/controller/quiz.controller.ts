@@ -1,8 +1,8 @@
 import type { Request, Response } from "express";
-import { z_quizSchema } from "../schema/quiz.schema";
-import { crudQuiz } from "../services/quiz.services";
-import { QuizCategory } from "../model/quiz.model";
-import { getIO } from "../config/socket";
+import { z_quizSchema } from "../schema/quiz.schema.js";
+import { crudQuiz } from "../services/quiz.services.js";
+import { QuizCategory } from "../model/quiz.model.js";
+import { getIO } from "../config/socket.js";
 
 type QuizParam = {
   quizId: string;

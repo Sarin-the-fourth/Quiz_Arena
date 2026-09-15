@@ -1,11 +1,11 @@
-import { getIO } from "../config/socket";
-import { Game } from "../model/game.model";
-import { Quiz } from "../model/quiz.model";
+import { getIO } from "../config/socket.js";
+import { Game } from "../model/game.model.js";
+import { Quiz } from "../model/quiz.model.js";
 import type {
   CreateQuizDTO,
   SubmitDTO,
   UpdateQuizDTO,
-} from "../schema/quiz.schema";
+} from "../schema/quiz.schema.js";
 
 class CrudQuiz {
   async createQuiz(data: CreateQuizDTO, userId: string) {

@@ -1,12 +1,12 @@
 import type { Request, Response } from "express";
-import { gameService } from "../services/game.services";
+import { gameService } from "../services/game.services.js";
 import {
   createGameSchema,
   getOneGameSchema,
   joinGameSchema,
   startGameSchema,
-} from "../schema/game.schema";
-import { getIO } from "../config/socket";
+} from "../schema/game.schema.js";
+import { getIO } from "../config/socket.js";
 
 type RoomCodeType = {
   roomCode: string;

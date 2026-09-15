@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
-import { loginSchema, signupSchema } from "../schema/user.schema";
-import { authService } from "../services/auth.services";
+import { loginSchema, signupSchema } from "../schema/user.schema.js";
+import { authService } from "../services/auth.services.js";
 
 export async function signup(req: Request, res: Response) {
   try {

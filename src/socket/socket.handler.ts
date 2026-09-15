@@ -1,5 +1,5 @@
 import type { Server } from "socket.io";
-import { registerGameSocket } from "./game.socket";
+import { registerGameSocket } from "./game.socket.js";
 
 export function registerSocketHandlers(io: Server) {
   io.on("connection", (socket) => {

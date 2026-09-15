@@ -1,9 +1,9 @@
 import express from "express";
 import cors from "cors";
-import authRoutes from "./routes/auth.routes.ts";
-import quizRoutes from "./routes/quiz.routes.ts";
-import gameRoutes from "./routes/game.routes.ts";
-import userRoutes from "./routes/user.routes.ts";
+import authRoutes from "./routes/auth.routes.js";
+import quizRoutes from "./routes/quiz.routes.js";
+import gameRoutes from "./routes/game.routes.js";
+import userRoutes from "./routes/user.routes.js";
 import cookieParser from "cookie-parser";
 
 const app = express();

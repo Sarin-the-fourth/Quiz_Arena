@@ -1,6 +1,6 @@
 import type { Socket } from "socket.io";
-import { verifyAccessToken } from "../utils/jwt";
-import { User } from "../model/user.model";
+import { verifyAccessToken } from "../utils/jwt.js";
+import { User } from "../model/user.model.js";
 
 export async function socketAuth(socket: Socket, next: (err?: Error) => void) {
   try {
