@@ -11,6 +11,11 @@ export enum QuizCategory {
   GENERAL_KNOWLEDGE = "General Knowledge",
 }
 
+export enum QuizType {
+  PUBLIC = "PUBLIC",
+  PRIVATE = "PRIVATE",
+}
+
 const optionSchema = new mongoose.Schema(
   {
     id: { type: String, required: true },
@@ -45,6 +50,12 @@ const quizSchema = new mongoose.Schema(
     category: {
       type: String,
       enum: Object.values(QuizCategory),
+      required: true,
+    },
+    quizType: {
+      type: String,
+      enum: Object.values(QuizType),
+      default: QuizType.PUBLIC,
       required: true,
     },
     questions: {

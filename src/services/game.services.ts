@@ -7,7 +7,8 @@ class GameService {
   async createGame(
     quizId: string,
     userId: string,
-    gameMode: IGame["gameMode"]
+    gameMode: IGame["gameMode"],
+    gameVisibility: "PUBLIC" | "PRIVATE" = "PUBLIC"
   ) {
     const quiz = await Quiz.findById(quizId);
 
@@ -24,6 +25,7 @@ class GameService {
       hostId: new mongoose.Types.ObjectId(userId),
       roomCode,
       gameMode,
+      gameVisibility,
 
       players: [
         {
@@ -102,7 +104,11 @@ class GameService {
   }
 
   async getGame() {
-    return await Game.find({ gameMode: "MULTIPLAYER", status: "WAITING" })
+    return await Game.find({
+      gameMode: "MULTIPLAYER",
+      status: "WAITING",
+      gameVisibility: "PUBLIC",
+    })
       .populate("quizId", "title category")
       .populate("hostId", "name");
   }

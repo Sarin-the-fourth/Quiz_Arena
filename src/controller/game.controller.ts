@@ -27,7 +27,8 @@ export async function createGame(req: Request, res: Response) {
     const game = await gameService.createGame(
       result.data.quizId,
       userId,
-      result.data.gameMode
+      result.data.gameMode,
+      result.data.gameVisibility
     );
 
     return res.status(200).json({

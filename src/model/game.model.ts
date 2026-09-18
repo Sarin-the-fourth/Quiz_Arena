@@ -11,6 +11,7 @@ export interface IGame extends Document {
   quizId: mongoose.Types.ObjectId;
   hostId: mongoose.Types.ObjectId;
   roomCode: string;
+  gameVisibility: "PUBLIC" | "PRIVATE";
   gameMode: "SINGLE" | "MULTIPLAYER";
   players: IGamePlayer[];
   status: "WAITING" | "IN_PROGRESS" | "FINISHED";
@@ -40,6 +41,13 @@ const gameSchema = new mongoose.Schema<IGame>(
     gameMode: {
       type: String,
       enum: ["SINGLE", "MULTIPLAYER"],
+      required: true,
+    },
+
+    gameVisibility: {
+      type: String,
+      enum: ["PUBLIC", "PRIVATE"],
+      default: "PUBLIC",
       required: true,
     },
 

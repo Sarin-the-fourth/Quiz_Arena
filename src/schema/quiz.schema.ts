@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { QuizCategory } from "../model/quiz.model.js";
+import { QuizCategory, QuizType } from "../model/quiz.model.js";
 
 export const z_questionSchema = z
   .object({
@@ -31,11 +31,11 @@ export const z_quizSchema = z.object({
   title: z.string().trim().min(1, "Title required"),
   description: z.string().trim().min(1, "Description required"),
   category: z.enum(QuizCategory),
+  quizType: z.enum(QuizType).default(QuizType.PUBLIC),
   questions: z.array(z_questionSchema).min(1, "Atleast 1 question required"),
 });
 
 export type CreateQuizDTO = z.infer<typeof z_quizSchema>;
-
 export const z_updateQuizSchema = z_quizSchema.partial();
 export type UpdateQuizDTO = z.infer<typeof z_updateQuizSchema>;
 

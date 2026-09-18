@@ -1,6 +1,6 @@
 import { getIO } from "../config/socket.js";
 import { Game } from "../model/game.model.js";
-import { Quiz } from "../model/quiz.model.js";
+import { Quiz, QuizType } from "../model/quiz.model.js";
 import type {
   CreateQuizDTO,
   SubmitDTO,
@@ -16,7 +16,9 @@ class CrudQuiz {
   }
 
   async getQuiz() {
-    return await Quiz.find().select("_id title description category createdBy");
+    return await Quiz.find({ quizType: QuizType.PUBLIC }).select(
+      "_id title description category createdBy"
+    );
   }
 
   // returns questions
