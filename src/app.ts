@@ -6,7 +6,6 @@ import gameRoutes from "./routes/game.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import cookieParser from "cookie-parser";
 import { allowedOrigins } from "./config/cors.js";
-import mongoose from "mongoose";
 
 const app = express();
 
@@ -22,14 +21,6 @@ app.use(
     credentials: true,
   })
 );
-
-app.get("/health", (_req, res) => {
-  if (mongoose.connection.readyState !== 1) {
-    return res.status(503).json({ status: "starting" });
-  }
-
-  return res.status(200).json({ status: "ready" });
-});
 
 app.use(express.json());
 app.use(cookieParser());
